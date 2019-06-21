@@ -332,6 +332,58 @@ class chess_past(object):
     
         self.X_piece=X_piece
         self.y_piece=y_piece
+
+    """
+    If you have a single txt file in which all the downloaded games are you cann ust give the path e.g. 'spiele.txt' and it will read it and put them in single txt
+    files- works only for datasets downloaded from FICS
+
+    input:
+    path_to_all_in_one = str
+        -path to the txt file which holds all the games downloaded
+
+    
+    output:
+        index = int
+            -number of games created
+        
+        stores every game in a single txt file with the name gmae_x.txt
+    """
+
+
+
+    def create_single_txt_games(self,path_to_all_in_one):
+
+        all_games=open(path_to_all_in_one,'r')
+
+        games_str=all_games.read()
+
+        games=[]
+        index=1
+        number_of_games= games_str.count('[Eve')
+
+        while index <=number_of_games:
+            
+            begin=games_str.find('[Event')
+            
+            end=games_str.find('} 0-1')
+            end+=5
+            
+            games.append(games_str[begin:end])
+            
+            games_str=games_str[end:]
+            
+            index+=1
+            
+        for x in range(number_of_games):
+            
+            game=open('game_'+str(x)+'.txt','w')
+            
+            game.write(games[x])
+            
+            game.close()
+
+        return index
+
             
         
 
