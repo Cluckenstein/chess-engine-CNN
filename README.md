@@ -1,5 +1,10 @@
 **This is a chess engine based on a Convolutional Neural Network**
 
+To run:
+* Might need to pip install keras,python-chess etc.
+* If you want to see it play against stockfish engine you need to download and make said
+* Else run the game_manni.py file and type game_AI() in your IPython console
+
 It is far from being a really good chess player, rather than it showing how one can utilize modern machine learning with only a few lines of code 
 Problems with the algorithm are but are not limited to: 
 *  Strategies cannot be palyed as a whole
