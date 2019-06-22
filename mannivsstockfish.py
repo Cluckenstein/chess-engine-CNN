@@ -32,7 +32,7 @@ import chess.engine
 def gamevs(path_to_model=False,piece_path=False,
             game_mode='CNN',board=None):
     
-    engine = chess.engine.SimpleEngine.popen_uci("/Users/maximilianreihn/Downloads/Stockfish-master/src/stockfish")
+    engine = chess.engine.SimpleEngine.popen_uci("/Users/USER_NAME/Downloads/Stockfish-master/src/stockfish")
 
     columns=['a','b','c','d','e','f','g','h']
     rows=['1','2','3','4','5','6','7','8']
