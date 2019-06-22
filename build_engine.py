@@ -4,7 +4,7 @@
 """
 Created on Thu Jun 20 13:22:13 2019
 
-@author: maximilianreihn
+@author: Cluceknstein
 """
 
 import chess

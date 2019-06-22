@@ -4,7 +4,7 @@
 """
 Created on Wed Jun 19 16:23:01 2019
 
-@author: maximilianreihn
+@author: Cluckenstein
 """
 
 ########################################################################
@@ -23,7 +23,7 @@ Created on Wed Jun 19 16:23:01 2019
 import chess
 import numpy as np
 import chess.svg
-import test_past
+import build_engine
 import time
 import random
 from IPython.display import SVG,display
@@ -46,7 +46,7 @@ def gamevs(path_to_model=False,piece_path=False,
     if type(piece_path)==bool:
         path_to_piece='piece_test_1_10epochs.h5'
     
-    manfred=test_past.chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
+    manfred=build_engine.chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
     
     #print("You are white which is represented by the white figures")
     
