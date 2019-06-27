@@ -335,10 +335,11 @@ class chess_past(object):
     """
     If you have a single txt file in which all the downloaded games are you cann ust give the path e.g. 'spiele.txt' and it will read it and put them in single txt
     files- works only for datasets downloaded from FICS
+    You should store the txt file in a new folder so the new txt files are stored there too
 
     input:
     path_to_all_in_one = str
-        -path to the txt file which holds all the games downloaded
+        -path to the folder in which the txt file with name spiele.txt, which holds all the games downloaded e.g. trainig_set/
 
     
     output:
@@ -352,7 +353,7 @@ class chess_past(object):
 
     def create_single_txt_games(self,path_to_all_in_one):
 
-        all_games=open(path_to_all_in_one,'r')
+        all_games=open(path_to_all_in_one+'spiele.txt','r')
 
         games_str=all_games.read()
 
@@ -375,7 +376,7 @@ class chess_past(object):
             
         for x in range(number_of_games):
             
-            game=open('game_'+str(x)+'.txt','w')
+            game=open(path_to_all_in_one+'game_'+str(x)+'.txt','w')
             
             game.write(games[x])
             
@@ -515,7 +516,7 @@ class chess_past(object):
                     y_val=False,
                     validation_split=0.1,
                     start_lr=1e-3,
-                    halvings_of_lr=5):
+                    halvings_of_lr=3):
         
         self.start_lr_piece = start_lr
         self.halvings_of_lr_piece = halvings_of_lr
