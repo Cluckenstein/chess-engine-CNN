@@ -12,7 +12,7 @@ import chess.pgn
 import numpy as np
 import sys
 import plaidml.keras
-plaidml.keras.install_backend()
+plaidml.keras.install_backend() #I used this in orde to be able to exploit AMD GPUs on Mac, one may use the normal tensorflow backend
 import keras
 keras.backend.backend()
 from keras.models import Sequential
@@ -24,7 +24,7 @@ from keras.models import load_model
 
 class chess_past(object):
     """
-    We intiaize the model by either using a existing one or a blank one which can be trained 
+    We intiaize the model by either using a existing one from a file or a blank one which can be trained 
     The class takes the following parameters:
     weight_decay = float 
         -Gives the weight decay used by the convolutional layers in the model
@@ -32,7 +32,6 @@ class chess_past(object):
     old_model_path = str
         -takes a string leading to the model predicting the field of the following move
         -default is set to false 
-
     piece_path = str
         -takes a string leading to the model predicting the field of the following piece used
         -default is false 
@@ -49,15 +48,15 @@ class chess_past(object):
             weight_decay = self.weight_decay
             self.model=Sequential()
             self.model.add(Conv2D(32, (2,2), padding='same', kernel_regularizer=regularizers.l2(weight_decay), input_shape=(8,8,13)))
-            self.model.add(Activation('tanh'))
+            self.model.add(Activation('elu'))
             self.model.add(BatchNormalization())
             self.model.add(Dropout(0.15))
             self.model.add(Conv2D(64, (3,3), padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
-            self.model.add(Activation('tanh'))
+            self.model.add(Activation('elu'))
             self.model.add(BatchNormalization())
             self.model.add(Dropout(0.15))
             self.model.add(Conv2D(128, (3,3), padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
-            self.model.add(Activation('tanh'))
+            self.model.add(Activation('elu'))
             self.model.add(BatchNormalization())
             self.model.add(Dropout(0.2))
             self.model.add(Flatten())
@@ -484,14 +483,25 @@ class chess_past(object):
             number=input('Now please give the number of games in that folder:')
             self.create_training(path,int(number))
         
+        filepath='cache_model.h5'
+        
+        checkpoint = keras.callbacks.ModelCheckpoint(filepath, 
+                                             monitor='val_acc', 
+                                             verbose=1, 
+                                             save_best_only=True, 
+                                             mode='max')
+        
+        callbacks_list = [checkpoint,keras.callbacks.TerminateOnNaN(),LearningRateScheduler(self.lr_schedule)]
+        
         self.model.fit(X_train, y_train,
                   batch_size=batch_size,
                   epochs=self.epochs,
                   verbose=1,
-                  callbacks=[keras.callbacks.TerminateOnNaN(),LearningRateScheduler(self.lr_schedule)],
+                  callbacks=callbacks_list,
                   validation_split=validation_split,
                   validation_data=validation_set)
 
+        self.model.load_weights(filepath)
 
     """
     Same as above but trains the model piece which should predict which piece to use in the next move 
@@ -591,8 +601,8 @@ class chess_past(object):
             value = max(best_val, self.minimax(depth - 1, board,-10000,10000, not maximizer))
             board.pop()
             if value > best_val:
-                print("Best score: " ,str(best_val))
-                print("Best move: ",str(best_final))
+                #print("Best score: " ,str(best_val))
+                #print("Best move: ",str(best_final))
                 best_val = value
                 best_final = move
         return best_final

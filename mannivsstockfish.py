@@ -29,10 +29,10 @@ import random
 from IPython.display import SVG,display
 import chess.engine
 
-def gamevs(path_to_model=False,piece_path=False,
+def gamevs(USER_NAME,path_to_model=False,piece_path=False,
             game_mode='CNN',board=None):
     
-    engine = chess.engine.SimpleEngine.popen_uci("/Users/USER_NAME/Downloads/Stockfish-master/src/stockfish")
+    engine = chess.engine.SimpleEngine.popen_uci("/Users/"+USER_NAME+"/Downloads/Stockfish-master/src/stockfish")
 
     columns=['a','b','c','d','e','f','g','h']
     rows=['1','2','3','4','5','6','7','8']
@@ -63,7 +63,7 @@ def gamevs(path_to_model=False,piece_path=False,
     
     
     display(SVG(chess.svg.board(board,coordinates=True)))
-    while not board.is_game_over() and move_indicator<8:
+    while not board.is_game_over() and move_indicator<20:
 
         turn = (-1)**move_indicator
         
@@ -72,8 +72,9 @@ def gamevs(path_to_model=False,piece_path=False,
             result = engine.play(board, chess.engine.Limit(time=0.100,depth=3))
             board.push(result.move)
             
-            time.sleep(1)
+            time.sleep(1.5)
         if turn>0:######Manfreds turn
+            time.sleep(1.5)
             pos_moves=[]
             change=False
             for move in board.legal_moves:
