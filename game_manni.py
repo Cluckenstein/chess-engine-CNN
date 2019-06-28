@@ -64,10 +64,10 @@ def game_AI(path_to_model=False,piece_path=False,
     moves_black=[]
     
     if type(path_to_model)==bool:
-        path_to_model='model_past_drop_10epochs.h5'
+        path_to_model='final_model.h5'
         
     if type(piece_path)==bool:
-        path_to_piece='piece_test_1_10epochs.h5'
+        path_to_piece='final_piece.h5'
     
     manfred=build_engine.chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
     

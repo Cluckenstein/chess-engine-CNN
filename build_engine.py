@@ -37,7 +37,7 @@ class chess_past(object):
         -default is false 
     """
     
-    def __init__(self,weight_decay=5e-2,old_model_path=False,piece_path=False):
+    def __init__(self,weight_decay=5e-6,old_model_path=False,piece_path=False):
         
         if type(old_model_path)!=bool: #Install old model if one is already trained or initialize new model by giving no old model
             self.model = load_model(old_model_path)
@@ -119,7 +119,7 @@ class chess_past(object):
 
     """
     Usually a chess board is notated as a FEN notation (https://de.wikipedia.org/wiki/Forsyth-Edwards-Notation) but 
-    we want to have it in matrix form of (8,8,13) where 8x8 coresponds to the board and 13 is the number of different
+    we want to have it in matrix form of (8,8,13) where 8x8 coresponds to the board and 12 is the number of different
     possibilities a field can be inherrited by. e.g. own king, enemy kind or empty.
     I referr to own as the AI's figures
     this takes the following input:
@@ -164,13 +164,11 @@ class chess_past(object):
             board_chan[:,:,c]=chan
             c+=1
             
-            chan=np.zeros((8,8))       
-            
         return board_chan
  
     """
     There is Databases out there (prefer:https://www.ficsgames.org ) where you can download those games to prepare this
-    one needs to download a png file, change it to .txt and put it into a new folder, run create_all_games.py in this folder
+    one needs to download a png file, change it to .txt and put it into a new folder, run chess_past.create_single_txt_games(...) on this folder
     and every game will be put into a single .txt file
     From those files we create a (N,8,8,13) Matrix where N is number of games* avg moves per game.
     This array holds N board layouts and we will create a resuklt of shape (N,64) which indicates the target field the
@@ -190,7 +188,7 @@ class chess_past(object):
         
         columns=['a','b','c','d','e','f','g','h']
         rows_f=['8','7','6','5','4','3','2','1']
-        
+        fene=['']
         for gam in range(number_of_games):       
 
             string=open(path_to_folder+'game_'+str(gam)+'.txt','r')
@@ -209,20 +207,22 @@ class chess_past(object):
                 
             fens_black=[]
             moves_black=[]
-            k=0
-            
+
             for x in range(len(fens)):#we are only interested in the black moves
                 if x % 2==1:
-                    if x >6:
-                        fens_black.append(fens[x])
-                        moves_black.append((moves[x],moves[x-2],moves[x-4],moves[x-6]))
-                        k+=1
-                    else:
-                        fens_black.append(fens[x])
-                        moves_black.append((moves[x],False))
-                        k+=1
+                    if fens[x] not in fene:
+                        if x>6:
+                            fens_black.append(fens[x])
+                            moves_black.append((moves[x],moves[x-2],moves[x-4],moves[x-6]))
+                            
+                            fene.append(fens[x])
+                        else:
+                            fens_black.append(fens[x])
+                            moves_black.append((moves[x],False))
+                            fene.append(fens[x])
+                            
+
                         
-                    
             for x in range(len(fens_black)):
                 if moves_black[x][1]!=False:
                     trainx.append(self.fen_to_chan(fens_black[x]))
@@ -240,6 +240,7 @@ class chess_past(object):
                     destin=moves_black[x][0][2:4]
                     field=(int(destin[1])-1)*8 + int(columns.index(destin[0]))
                     trainy.append((field,0))
+            
 
                 
             
@@ -265,7 +266,6 @@ class chess_past(object):
                 alp=np.zeros((1,64))
                 alp[0,int(trainy[x][0])]=1
                 y_train[x,:]=alp
-                
     
         self.X_train=X_train
         self.y_train=y_train
@@ -278,13 +278,15 @@ class chess_past(object):
 
 
 
-        piecex=[] #this will be a 8x8x13 matrix
+        piecex=[]
         piecey=[] #this will be a number between 0-63 corresponding to the field the player moves to given the current board
         
         columns=['a','b','c','d','e','f','g','h']
         rows=['1','2','3','4','5','6','7','8']
         figures=['p','b','r','n','q','k']
+                    
         
+        fene=['']
         for gam in range(number_of_games): #iterating through the number of games
             
             string=open(path_to_folder+'game_'+str(gam)+'.txt','r')
@@ -292,7 +294,6 @@ class chess_past(object):
             pgn=chess.pgn.read_game(string)
             
             board=pgn.board()
-            
             fens=[]
             moves=[]
             
@@ -303,15 +304,16 @@ class chess_past(object):
                 
             fens_black=[]
             moves_black=[]
-            k=0
-            for x in range(len(fens)): #we are only interested in the black moves
-                if x % 2 ==1:
-                    fens_black.append(fens[x])
-                    moves_black.append(moves[x])
-                    k+=1
-                    
+            
+            for x in range(len(fens)):#we are only interested in the black moves
+                if x % 2==1:
+                    if fens[x] not in fene:
+                        fens_black.append(fens[x])
+                        fene.append(fens[x])
+                        moves_black.append(moves[x])
+            
+            
             for x in range(len(fens_black)):
-                piecex.append(self.fen_to_chan(fens_black[x]))
                 origin = moves_black[x][0:2]
                 num_field=columns.index(origin[0])+rows.index(origin[1])*8
                 piece = str((chess.Board(fens_black[x])).piece_at(num_field))
@@ -320,16 +322,14 @@ class chess_past(object):
             
             print('Reading game: ',gam+1,' of ',number_of_games)
             
-        X_piece=np.zeros((len(piecex),8,8,13))
+
         y_piece=np.zeros((len(piecey),6))
         self.piecey=piecey
         for x in range(len(piecex)):
             alp=np.zeros((1,6))
-            X_piece[x,:,:,:]=piecex[x]
             alp[0,figures.index(piecey[x])] = 1
             y_piece[x,:]=alp
-    
-        self.X_piece=X_piece
+
         self.y_piece=y_piece
 
     """
