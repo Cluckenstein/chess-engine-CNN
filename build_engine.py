@@ -181,7 +181,6 @@ class chess_past(object):
     X_train with the form (number of moves,8,8,13)
     y_train with the form (number of moves,64)
     """
-    #test
     def create_training(self,path_to_folder,number_of_games):
         trainx=[] 
         trainy=[]
