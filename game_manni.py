@@ -12,7 +12,7 @@ This file will be the acutal game in which the computer makes decisions on where
 the player can interact in the console window IPython
 
 In order to play the game, you need to run this file and then run game_AI() with the standard model or another one
-
+youc also have to install the requirementds.txt
 inputs:
 path_to_model = str
     -if you have a model you can input it here with a file path
@@ -52,7 +52,7 @@ from IPython.display import SVG,display
 from chess.svg import board
 
 def game_AI(path_to_model=False,piece_path=False,
-            game_mode='CNN',board=None):
+            game_mode='CNN',board_old=None):
 
     columns=['a','b','c','d','e','f','g','h']
     rows=['1','2','3','4','5','6','7','8']
@@ -79,9 +79,10 @@ def game_AI(path_to_model=False,piece_path=False,
     print("You begin!")
     print("If you can and want to exchange a pawn for a Queen, type to move and add a 'Q' at the end e.g. a7a8q ")
     move_indicator = 1     
-    if board==None:
+    if board_old==None:
         board=chess.Board()
     else:
+        board=board_old
         if not board.turn:
             move_indicator+=1
     
