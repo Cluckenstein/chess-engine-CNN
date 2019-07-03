@@ -23,7 +23,7 @@ Created on Wed Jun 19 16:23:01 2019
 import chess
 import numpy as np
 import chess.svg
-import build_engine
+#import build_engine
 import time
 import random
 from IPython.display import SVG,display
@@ -37,16 +37,15 @@ def gamevs(USER_NAME,path_to_model=False,piece_path=False,
     columns=['a','b','c','d','e','f','g','h']
     rows=['1','2','3','4','5','6','7','8']
     figures=['p','b','r','n','q','k']
-    moves_white=[]
     moves_black=[]
     
     if type(path_to_model)==bool:
-        path_to_model='model_past_1_5epochs.h5'
+        path_to_model='final_model.h5'
         
     if type(piece_path)==bool:
-        path_to_piece='piece_test_1_10epochs.h5'
+        path_to_piece='final_piece.h5'
     
-    manfred=build_engine.chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
+    manfred=chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
     
     #print("You are white which is represented by the white figures")
     
@@ -72,9 +71,9 @@ def gamevs(USER_NAME,path_to_model=False,piece_path=False,
             result = engine.play(board, chess.engine.Limit(time=0.100,depth=3))
             board.push(result.move)
             
-            time.sleep(1.5)
+            #time.sleep(1.5)
         if turn>0:######Manfreds turn
-            time.sleep(1.5)
+            #time.sleep(1.5)
             pos_moves=[]
             change=False
             for move in board.legal_moves:

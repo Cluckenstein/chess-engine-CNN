@@ -49,6 +49,7 @@ import chess
 import numpy as np
 import random
 from IPython.display import SVG,display
+from chess.svg import board
 
 def game_AI(path_to_model=False,piece_path=False,
             game_mode='CNN',board=None):
@@ -69,7 +70,7 @@ def game_AI(path_to_model=False,piece_path=False,
     if type(piece_path)==bool:
         path_to_piece='final_piece.h5'
     
-    manfred=build_engine.chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
+    manfred=chess_past(old_model_path=path_to_model,piece_path=path_to_piece)
     
     print("You are white which is represented by the white figures")
     
@@ -245,7 +246,7 @@ def game_AI(path_to_model=False,piece_path=False,
                 
                 if black_move==None:
                     print("Manfred is thinking about his next move!")
-                    time.sleep(random.uniform(0,1)*4)
+                    #time.sleep(random.uniform(0,1)*4)
                     black_move=chess.Move.from_uci(provisional)
                     board.push(black_move)
                     moves_black.append(str(provisional))
