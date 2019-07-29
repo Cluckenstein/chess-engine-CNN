@@ -1,7 +1,7 @@
 **This is a chess engine based on a Convolutional Neural Network**
 
 To run:
-* Might need to pip install keras,python-chess etc.
+* Might need to pip install requirements.txt and erase the upcoming errors
 * If you want to see it play against stockfish engine you need to download and make said
 * Else run the game_manni.py file and type game_AI() in your IPython console
 
